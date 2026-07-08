@@ -1,21 +1,42 @@
-## Proposal
+## Summary
 
-Build a minimal Python 3.10+ command-line Todo application with local JSON persistence. The CLI will support adding, listing, completing, and deleting todos. The goal is a small, well-structured, testable project with clear UX and robust error handling.
+Scaffold a minimal Python CLI Todo application with JSON persistence and a clean layered structure (CLI, service, store, models).
 
-### Scope
+## Goals
+
+- Simple, reliable command-line workflow
+- Clear separation of concerns
+- Deterministic local JSON persistence
+- Testable core logic
+
+## Non-Goals
+
+- No GUI or network sync
+- No multi-user concurrency
+
+## Acceptance Criteria
+
+- Python 3.10+ project with package `todo/`
 - CLI commands: `add`, `list`, `complete`, `delete`
-- JSON file storage (`todos.json`) in project root (configurable via env)
-- Todo fields: id (int), title (str), completed (bool), created_at (ISO 8601)
+- Data persisted to `todos.json`
+- Todo fields: id, title, completed, created_at
 - Graceful handling of invalid commands and IDs
-- Unit tests with pytest for core logic
-- README with setup, usage, structure, and manual test steps
+- PEP 8 + type hints
+- README with usage and structure
+- Pytest tests for core flows
+- Manual testing steps in README
+- Delete confirmation behavior:
+  - By default, `delete <id>` MUST prompt for confirmation: `Are you sure you want to delete todo <id>? [y/N]`
+  - Deletion proceeds only on explicit `y`/`yes` (case-insensitive); any other input cancels with exit code 1
+  - A `--force` flag bypasses the prompt and deletes immediately
 
-### Non-Goals
-- No GUI or web interface
-- No multi-user sync or remote storage
-- No advanced filtering beyond basic list
+## Risks
 
-### Success Criteria
-- All acceptance criteria met
-- Clean project structure, PEP 8, type hints
-- Passing tests and simple manual verification
+- JSON corruption; mitigated with backup on read failure
+
+## Milestones
+
+1. Scaffold + models
+2. Store + service
+3. CLI
+4. Tests + docs
