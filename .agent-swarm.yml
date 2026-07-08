@@ -1,0 +1,19 @@
+enabled: true
+
+openspec:
+  enabled: true
+  require_spec_approval: false
+
+graphify:
+  enabled: true
+  backend: openai
+
+hindsight:
+  enabled: true
+  max_lessons: 5
+
+checks: {}
+
+permissions:
+  open_pull_requests: true
+  push_branches: true
