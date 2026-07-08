@@ -1,0 +1,4 @@
+body { font-family: Arial, sans-serif; max-width: 500px; margin: 40px auto; }
+h1 { text-align: center; }
+li { display: flex; gap: 10px; margin: 8px 0; }
+button { cursor: pointer; }

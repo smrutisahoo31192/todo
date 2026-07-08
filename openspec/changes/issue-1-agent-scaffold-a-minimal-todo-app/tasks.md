@@ -1,0 +1,6 @@
+- [x] Create basic HTML structure
+- [x] Implement todo logic (add, toggle, delete)
+- [x] Persist todos using localStorage
+- [x] Add minimal styling
+- [x] Write README with run instructions
+- [x] Document manual test steps
