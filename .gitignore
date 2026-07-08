@@ -1,0 +1,6 @@
+# Agent Swarm tool artifacts
+graphify-out/
+.opencode/
+openspec/config.yaml
+openspec/AGENTS.md
+openspec/instructions/
