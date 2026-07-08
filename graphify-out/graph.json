@@ -1,0 +1,191 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "openspec-apply-change Skill",
+      "file_type": "code",
+      "source_file": ".opencode/skills/openspec-apply-change/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": "openspec",
+      "contributor": null,
+      "id": "opencode_skills_openspec_apply_change_skill",
+      "community": 0,
+      "norm_label": "openspec-apply-change skill"
+    },
+    {
+      "label": "openspec-archive-change Skill",
+      "file_type": "code",
+      "source_file": ".opencode/skills/openspec-archive-change/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": "openspec",
+      "contributor": null,
+      "id": "opencode_skills_openspec_archive_change_skill",
+      "community": 1,
+      "norm_label": "openspec-archive-change skill"
+    },
+    {
+      "label": "openspec-explore Skill",
+      "file_type": "code",
+      "source_file": ".opencode/skills/openspec-explore/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": "openspec",
+      "contributor": null,
+      "id": "opencode_skills_openspec_explore_skill",
+      "community": 2,
+      "norm_label": "openspec-explore skill"
+    },
+    {
+      "label": "openspec-propose Skill",
+      "file_type": "code",
+      "source_file": ".opencode/skills/openspec-propose/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": "openspec",
+      "contributor": null,
+      "id": "opencode_skills_openspec_propose_skill",
+      "community": 3,
+      "norm_label": "openspec-propose skill"
+    },
+    {
+      "label": "openspec-sync-specs Skill",
+      "file_type": "code",
+      "source_file": ".opencode/skills/openspec-sync-specs/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": "openspec",
+      "contributor": null,
+      "id": "opencode_skills_openspec_sync_specs_skill",
+      "community": 4,
+      "norm_label": "openspec-sync-specs skill"
+    },
+    {
+      "label": "opsx-apply Command",
+      "file_type": "document",
+      "source_file": ".opencode/commands/opsx-apply.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "opencode_commands_opsx_apply_md",
+      "community": 0,
+      "norm_label": "opsx-apply command"
+    },
+    {
+      "label": "opsx-archive Command",
+      "file_type": "document",
+      "source_file": ".opencode/commands/opsx-archive.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "opencode_commands_opsx_archive_md",
+      "community": 1,
+      "norm_label": "opsx-archive command"
+    },
+    {
+      "label": "opsx-explore Command",
+      "file_type": "document",
+      "source_file": ".opencode/commands/opsx-explore.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "opencode_commands_opsx_explore_md",
+      "community": 2,
+      "norm_label": "opsx-explore command"
+    },
+    {
+      "label": "opsx-propose Command",
+      "file_type": "document",
+      "source_file": ".opencode/commands/opsx-propose.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "opencode_commands_opsx_propose_md",
+      "community": 3,
+      "norm_label": "opsx-propose command"
+    },
+    {
+      "label": "opsx-sync Command",
+      "file_type": "document",
+      "source_file": ".opencode/commands/opsx-sync.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "opencode_commands_opsx_sync_md",
+      "community": 4,
+      "norm_label": "opsx-sync command"
+    }
+  ],
+  "links": [
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".opencode/commands/opsx-apply.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "opencode_commands_opsx_apply_md",
+      "target": "opencode_skills_openspec_apply_change_skill"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".opencode/commands/opsx-archive.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "opencode_commands_opsx_archive_md",
+      "target": "opencode_skills_openspec_archive_change_skill"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".opencode/commands/opsx-explore.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "opencode_commands_opsx_explore_md",
+      "target": "opencode_skills_openspec_explore_skill"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".opencode/commands/opsx-propose.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "opencode_commands_opsx_propose_md",
+      "target": "opencode_skills_openspec_propose_skill"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".opencode/commands/opsx-sync.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "opencode_commands_opsx_sync_md",
+      "target": "opencode_skills_openspec_sync_specs_skill"
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "24289160cce4d45aba589ee3f0aa3159ccb6cc81"
+}

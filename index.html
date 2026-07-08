@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minimal Todo App</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
+    li { display: flex; justify-content: space-between; margin: 8px 0; }
+    .done { text-decoration: line-through; color: gray; }
+    button { margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Todo</h1>
+  <input id="todo-input" placeholder="Add a task" />
+  <button onclick="addTodo()">Add</button>
+  <ul id="todo-list"></ul>
+
+  <script src="script.js"></script>
+</body>
+</html>

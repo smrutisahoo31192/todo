@@ -1,0 +1,144 @@
+{
+  "communities": {
+    "0": [
+      "opencode_commands_opsx_apply_md",
+      "opencode_skills_openspec_apply_change_skill"
+    ],
+    "1": [
+      "opencode_commands_opsx_archive_md",
+      "opencode_skills_openspec_archive_change_skill"
+    ],
+    "2": [
+      "opencode_commands_opsx_explore_md",
+      "opencode_skills_openspec_explore_skill"
+    ],
+    "3": [
+      "opencode_commands_opsx_propose_md",
+      "opencode_skills_openspec_propose_skill"
+    ],
+    "4": [
+      "opencode_commands_opsx_sync_md",
+      "opencode_skills_openspec_sync_specs_skill"
+    ]
+  },
+  "cohesion": {
+    "0": 1.0,
+    "1": 1.0,
+    "2": 1.0,
+    "3": 1.0,
+    "4": 1.0
+  },
+  "gods": [
+    {
+      "id": "opencode_skills_openspec_apply_change_skill",
+      "label": "openspec-apply-change Skill",
+      "degree": 1
+    },
+    {
+      "id": "opencode_skills_openspec_archive_change_skill",
+      "label": "openspec-archive-change Skill",
+      "degree": 1
+    },
+    {
+      "id": "opencode_skills_openspec_explore_skill",
+      "label": "openspec-explore Skill",
+      "degree": 1
+    },
+    {
+      "id": "opencode_skills_openspec_propose_skill",
+      "label": "openspec-propose Skill",
+      "degree": 1
+    },
+    {
+      "id": "opencode_skills_openspec_sync_specs_skill",
+      "label": "openspec-sync-specs Skill",
+      "degree": 1
+    },
+    {
+      "id": "opencode_commands_opsx_apply_md",
+      "label": "opsx-apply Command",
+      "degree": 1
+    },
+    {
+      "id": "opencode_commands_opsx_archive_md",
+      "label": "opsx-archive Command",
+      "degree": 1
+    },
+    {
+      "id": "opencode_commands_opsx_explore_md",
+      "label": "opsx-explore Command",
+      "degree": 1
+    },
+    {
+      "id": "opencode_commands_opsx_propose_md",
+      "label": "opsx-propose Command",
+      "degree": 1
+    },
+    {
+      "id": "opencode_commands_opsx_sync_md",
+      "label": "opsx-sync Command",
+      "degree": 1
+    }
+  ],
+  "surprises": [
+    {
+      "source": "opsx-apply Command",
+      "target": "openspec-apply-change Skill",
+      "source_files": [
+        ".opencode/commands/opsx-apply.md",
+        ".opencode/skills/openspec-apply-change/SKILL.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "opsx-archive Command",
+      "target": "openspec-archive-change Skill",
+      "source_files": [
+        ".opencode/commands/opsx-archive.md",
+        ".opencode/skills/openspec-archive-change/SKILL.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "opsx-explore Command",
+      "target": "openspec-explore Skill",
+      "source_files": [
+        ".opencode/commands/opsx-explore.md",
+        ".opencode/skills/openspec-explore/SKILL.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "opsx-propose Command",
+      "target": "openspec-propose Skill",
+      "source_files": [
+        ".opencode/commands/opsx-propose.md",
+        ".opencode/skills/openspec-propose/SKILL.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "opsx-sync Command",
+      "target": "openspec-sync-specs Skill",
+      "source_files": [
+        ".opencode/commands/opsx-sync.md",
+        ".opencode/skills/openspec-sync-specs/SKILL.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "tokens": {
+    "input": 15127,
+    "output": 1015
+  }
+}
