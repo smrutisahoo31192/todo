@@ -1,60 +1,72 @@
-## Architecture Overview
+## Design
 
-The application will follow a simple layered structure:
+### Architecture
 
-- CLI Layer: Parses user input and invokes application logic
-- Service Layer: Handles todo operations (add, list, complete, delete)
-- Persistence Layer: Reads/writes todos from/to a JSON file
+The application follows a simple layered design:
 
-## Project Structure
+- CLI layer: Parses user input via `argparse`
+- Service layer: Implements business logic
+- Storage layer: Handles JSON persistence
 
-```
-todo_app/
-  __init__.py
-  cli.py
-  models.py
-  service.py
-  storage.py
-tests/
-  test_service.py
-todos.json
-README.md
-```
+### Data Model
 
-## Data Model
-
-Todo object fields:
+Todo fields:
 
 - id: string (UUID)
 - title: string
-- completed: boolean
+- completed: bool
 - created_at: ISO timestamp
 
-## CLI Design
+### Validation Rules
 
-Commands:
+- Todo title must not be empty or whitespace-only
+- Commands must validate required arguments
+- Operations on missing IDs should return clear errors
 
-- add <title>
-- list
-- complete <id>
-- delete <id>
+### Storage
 
-Use argparse for command parsing.
+- File: `todos.json`
+- If file does not exist, initialize with empty list
+- Read/write entire file per operation
 
-## Persistence
+### CLI Commands
 
-- File: todos.json in project root
-- Format: list of todo objects
-- Read on startup, write after each mutation
+#### add command
 
-## Error Handling
+- Input: title
+- Behavior:
+  - Reject empty or whitespace-only titles
+  - Create todo with UUID and timestamp
+  - Persist to file
 
-- Invalid command: show help message
-- Missing ID: user-friendly error
-- File errors: handled gracefully with fallback to empty list
+#### list command
 
-## Testing Strategy
+- Output all todos
+- Display:
+  - ID
+  - Title
+  - Status (completed/pending)
+
+#### complete command
+
+- Input: id
+- Behavior:
+  - Mark matching todo as completed
+  - Error if ID not found
+
+#### delete command
+
+- Input: id
+- Behavior:
+  - Remove todo
+  - Error if ID not found
+
+### Error Handling
+
+- Graceful CLI messages
+- No stack traces for user errors
+
+### Testing Strategy
 
 - Unit tests for service layer
-- Mock or isolate file I/O where appropriate
-- Use pytest
+- Mock or isolate file operations where needed

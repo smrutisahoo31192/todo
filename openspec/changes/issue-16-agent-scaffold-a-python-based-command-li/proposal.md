@@ -1,21 +1,27 @@
-## Summary
+## Proposal
 
-Introduce a minimal Python-based command-line Todo application with JSON persistence. The tool will support basic task management operations: add, list, complete, and delete.
+Build a minimal Python 3.10+ command-line Todo application with JSON-based persistence. The tool will support adding, listing, completing, and deleting todos via a clean CLI interface.
 
-## Goals
+### Goals
 
-- Provide a simple CLI for managing todos locally
-- Ensure data persistence via a JSON file
-- Maintain clean, testable, and type-annotated Python code
+- Simple, local-first task management
+- Clean architecture (CLI → service → storage)
+- Typed Python code following PEP 8
+- Easy to extend
 
-## Non-Goals
+### Non-Goals
 
-- No GUI or web interface
-- No external database integration
-- No user authentication or multi-user support
+- No database integration
+- No GUI
+- No remote sync
 
-## Success Criteria
+### Outcome
 
-- Users can manage todos entirely via CLI commands
-- Data persists correctly across runs
-- Codebase is structured, testable, and documented
+Users can manage todos using commands:
+
+- `add`
+- `list`
+- `complete`
+- `delete`
+
+Data is persisted in `todos.json`.

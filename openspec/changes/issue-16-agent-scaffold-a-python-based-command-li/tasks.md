@@ -1,41 +1,49 @@
-## Implementation Tasks
+## Tasks
 
-1. Scaffold project structure
-- Create package directories and base files
+### 1. Scaffold project
 
-2. Implement data model
-- Define Todo class with type hints
+- Create package structure
+- Add entrypoint script
 
-3. Implement storage layer
-- JSON read/write logic
-- Handle file initialization
+### 2. Data model
 
-4. Implement service layer
-- add_todo
+- Implement Todo class with type hints
+
+### 3. Storage layer
+
+- Implement JSON read/write
+- Initialize file if missing
+
+### 4. Service layer
+
+- add_todo (validate non-empty title)
 - list_todos
 - complete_todo
 - delete_todo
 
-5. Implement CLI
-- Setup argparse
-- Map commands to service functions
+### 5. CLI
 
-6. Add error handling
+- Configure argparse
+- Implement commands:
+  - add
+  - list
+  - complete
+  - delete
+
+### 6. Error handling
+
 - Invalid inputs
 - Missing IDs
 
-7. Write unit tests
-- Cover service logic
-- Use pytest
+### 7. Tests
 
-8. Create README
-- Overview
-- Installation
-- Usage examples
-- Project structure
-- Manual testing steps
+- Write pytest unit tests for service layer
 
-9. Verify acceptance criteria
-- Ensure all commands work
-- Validate persistence
-- Confirm code style and typing
+### 8. Documentation
+
+- README with usage and setup
+
+### 9. Verification
+
+- Validate all acceptance criteria
+- Manual CLI testing
