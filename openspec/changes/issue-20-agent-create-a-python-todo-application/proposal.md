@@ -1,20 +1,21 @@
-## Proposal
+## Proposal: Python CLI Todo Application
 
-Build a minimal Python 3.10+ command-line Todo application that allows users to manage tasks locally. The application will support adding, listing, completing, and deleting todos, with persistence handled via a JSON file.
+### Summary
+Build a minimal Python 3.10+ command-line todo app with JSON persistence. Users can add, list, complete, and delete todos.
 
 ### Goals
-
-- Provide a simple and fast CLI for task management
-- Store todos locally in a structured JSON file
-- Ensure code quality with type hints, PEP 8 compliance, and tests
+- Simple CLI with clear commands
+- Local persistence via `todos.json`
+- Clean layered design (model, storage, service, CLI)
+- Type hints and PEP 8 compliance
 
 ### Non-Goals
-
 - No GUI or web interface
-- No multi-user or remote sync support
+- No multi-user sync
 
-### Success Criteria
-
-- Users can manage todos entirely via CLI commands
-- Data persists correctly between runs
-- Codebase is testable and maintainable
+### Acceptance Criteria
+- Commands: `add`, `list`, `complete`, `delete`
+- Each todo has id, title, completed, created_at
+- Graceful handling of invalid IDs and empty states
+- Unit tests for service layer
+- README with usage and manual testing

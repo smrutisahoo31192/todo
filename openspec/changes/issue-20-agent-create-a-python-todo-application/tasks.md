@@ -1,49 +1,43 @@
 ## Tasks
 
 ### 1. Project Setup
-
-- Create Python package structure (`todo/`)
-- Add entry point script
+- Create Python package `todo/`
+- Add entry point script (`__main__.py` or `cli.py`)
 - Ensure Python 3.10+ compatibility
 
 ### 2. Data Model
-
 - Implement Todo model with type hints
-- Include ID, title, completed flag, and timestamp
+- Fields: id, title, completed, created_at
+- Enforce non-empty title
 
 ### 3. Storage Layer
-
-- Implement JSON read/write logic
-- Handle missing file initialization
+- Implement JSON read/write
+- Initialize file if missing
 
 ### 4. Service Layer
-
 - Implement functions:
   - add_todo
   - list_todos
   - complete_todo
   - delete_todo
-- Ensure unique ID generation
+- Ensure unique ID generation (UUID4)
 
 ### 5. CLI Layer
-
-- Implement argparse-based CLI
+- Implement argparse CLI
 - Map commands to service functions
-- Add helpful output formatting
+- Add readable output formatting
 
 ### 6. Error Handling
-
 - Handle invalid IDs
-- Handle empty list scenarios
+- Handle empty list
+- Handle empty title
 
 ### 7. Tests
-
-- Add pytest setup
-- Write unit tests for service layer
+- Setup pytest
+- Unit tests for service layer
 
 ### 8. Documentation
-
-- Write README with:
+- Write README:
   - Overview
   - Installation
   - Usage examples

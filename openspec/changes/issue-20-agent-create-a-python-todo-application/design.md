@@ -1,51 +1,59 @@
-## Design
+## Design: Python CLI Todo Application
 
-### Overview
+### Architecture Overview
+Four layers:
+- Model: Todo entity
+- Storage: JSON persistence
+- Service: Business logic
+- CLI: argparse interface
 
-The application will be a CLI-based Python program structured into small modules for clarity and testability.
+### Todo Model
+Fields:
+- id: str (UUID4)
+- title: str (non-empty)
+- completed: bool
+- created_at: str (ISO 8601)
 
-### Project Structure
+Validation:
+- Reject empty or whitespace-only titles
 
-- `todo/`
-  - `__init__.py`
-  - `models.py` (Todo data model)
-  - `storage.py` (JSON persistence)
-  - `service.py` (business logic)
-  - `cli.py` (command-line interface)
-- `tests/`
-  - `test_service.py`
+### Storage Layer
+File: `todos.json`
 
-### Data Model
+Responsibilities:
+- Read list of todos
+- Write list of todos
+- Initialize file if missing
 
-Each todo will contain:
+Format:
+Array of todo objects
 
-- `id`: unique integer
-- `title`: string
-- `completed`: boolean
-- `created_at`: ISO timestamp string
+### Service Layer
+Functions:
+- add_todo(title: str) -> dict
+- list_todos() -> list[dict]
+- complete_todo(todo_id: str) -> dict
+- delete_todo(todo_id: str) -> None
 
-### Storage
+Behavior:
+- Generate UUID for new todos
+- Raise error for missing IDs
 
-- File: `todos.json` in project root
-- Read/write handled via `storage.py`
-- If file does not exist, initialize with empty list
+### CLI Layer
+Commands:
+- add <title>
+- list
+- complete <id>
+- delete <id>
 
-### CLI
-
-Use `argparse` to support commands:
-
-- `add <title>`
-- `list`
-- `complete <id>`
-- `delete <id>`
+Output:
+- Human-readable list with status markers
 
 ### Error Handling
-
-- Invalid commands handled by argparse
-- Missing or invalid IDs return user-friendly messages
+- Invalid ID: clear error message
+- Empty list: friendly message
+- Empty title: reject with message
 
 ### Testing
-
-- Use `pytest`
-- Focus on service layer logic (add, complete, delete)
-- Use temporary files or mocks for storage
+- Pytest for service layer
+- Mock storage where appropriate
