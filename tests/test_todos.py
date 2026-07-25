@@ -1,14 +1,10 @@
-import pytest
 from fastapi.testclient import TestClient
 
 from app import storage
 from app.main import app
+from .conftest import TestingSessionLocal
 
 client = TestClient(app)
-
-
-def setup_function():
-    storage.reset()
 
 
 # ---------------------------------------------------------------------------
@@ -23,8 +19,11 @@ def test_list_todos_empty():
 
 
 def test_list_todos_returns_all():
-    storage.create("Task A")
-    storage.create("Task B")
+    session = TestingSessionLocal()
+    storage.create(session, "Task A")
+    storage.create(session, "Task B")
+    session.close()
+    
     r = client.get("/todos")
     assert r.status_code == 200
     data = r.json()
@@ -68,7 +67,10 @@ def test_create_todo_whitespace_title():
 
 
 def test_get_todo_existing():
-    created = storage.create("Read book")
+    session = TestingSessionLocal()
+    created = storage.create(session, "Read book")
+    session.close()
+    
     r = client.get(f"/todos/{created['id']}")
     assert r.status_code == 200
     body = r.json()
@@ -88,7 +90,10 @@ def test_get_todo_missing():
 
 
 def test_put_todo_valid():
-    created = storage.create("Old title")
+    session = TestingSessionLocal()
+    created = storage.create(session, "Old title")
+    session.close()
+    
     r = client.put(f"/todos/{created['id']}", json={"title": "New title", "completed": True})
     assert r.status_code == 200
     body = r.json()
@@ -102,7 +107,10 @@ def test_put_todo_missing():
 
 
 def test_put_todo_missing_completed_field():
-    created = storage.create("Foo")
+    session = TestingSessionLocal()
+    created = storage.create(session, "Foo")
+    session.close()
+    
     r = client.put(f"/todos/{created['id']}", json={"title": "Bar"})
     assert r.status_code == 422
 
@@ -113,7 +121,10 @@ def test_put_todo_missing_completed_field():
 
 
 def test_patch_todo_title_only():
-    created = storage.create("Initial")
+    session = TestingSessionLocal()
+    created = storage.create(session, "Initial")
+    session.close()
+    
     r = client.patch(f"/todos/{created['id']}", json={"title": "Updated"})
     assert r.status_code == 200
     body = r.json()
@@ -122,7 +133,10 @@ def test_patch_todo_title_only():
 
 
 def test_patch_todo_completed_only():
-    created = storage.create("Task")
+    session = TestingSessionLocal()
+    created = storage.create(session, "Task")
+    session.close()
+    
     r = client.patch(f"/todos/{created['id']}", json={"completed": True})
     assert r.status_code == 200
     body = r.json()
@@ -141,7 +155,10 @@ def test_patch_todo_missing():
 
 
 def test_delete_todo_existing():
-    created = storage.create("To delete")
+    session = TestingSessionLocal()
+    created = storage.create(session, "To delete")
+    session.close()
+    
     r = client.delete(f"/todos/{created['id']}")
     assert r.status_code == 204
     # Confirm it's gone
