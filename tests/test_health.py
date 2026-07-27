@@ -1,10 +1,9 @@
 from fastapi.testclient import TestClient
-from app.main import app
-
-client = TestClient(app)
 
 
-def test_health():
+def test_health(client: TestClient) -> None:
     r = client.get("/health")
+
     assert r.status_code == 200
     assert r.json() == {"status": "ok"}
+    assert r.headers["content-type"].startswith("application/json")
