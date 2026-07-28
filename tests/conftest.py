@@ -1,7 +1,8 @@
 import os
+
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
 from app.database import get_session
 from app.main import app
@@ -32,6 +33,15 @@ def override_get_session():
 
 # Apply the override
 app.dependency_overrides[get_session] = override_get_session
+
+
+@pytest.fixture
+def db_session() -> Session:
+    session = TestingSessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
 
 
 @pytest.fixture(autouse=True)
