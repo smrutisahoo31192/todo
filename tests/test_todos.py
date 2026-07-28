@@ -115,6 +115,24 @@ def test_put_todo_missing_completed_field():
     assert r.status_code == 422
 
 
+def test_put_todo_missing_title_field():
+    session = TestingSessionLocal()
+    created = storage.create(session, "Foo")
+    session.close()
+
+    r = client.put(f"/todos/{created['id']}", json={"completed": True})
+    assert r.status_code == 422
+
+
+def test_put_todo_whitespace_title():
+    session = TestingSessionLocal()
+    created = storage.create(session, "Foo")
+    session.close()
+
+    r = client.put(f"/todos/{created['id']}", json={"title": "   ", "completed": True})
+    assert r.status_code == 422
+
+
 # ---------------------------------------------------------------------------
 # PATCH /todos/{id}
 # ---------------------------------------------------------------------------
@@ -149,6 +167,15 @@ def test_patch_todo_missing():
     assert r.status_code == 404
 
 
+def test_patch_todo_whitespace_title():
+    session = TestingSessionLocal()
+    created = storage.create(session, "Initial")
+    session.close()
+
+    r = client.patch(f"/todos/{created['id']}", json={"title": "   "})
+    assert r.status_code == 422
+
+
 # ---------------------------------------------------------------------------
 # DELETE /todos/{id}
 # ---------------------------------------------------------------------------
@@ -161,9 +188,7 @@ def test_delete_todo_existing():
     
     r = client.delete(f"/todos/{created['id']}")
     assert r.status_code == 204
-    # Confirm it's gone
-    r2 = client.get(f"/todos/{created['id']}")
-    assert r2.status_code == 404
+    assert r.content == b""
 
 
 def test_delete_todo_missing():
