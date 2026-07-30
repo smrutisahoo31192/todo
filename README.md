@@ -4,13 +4,13 @@ A simple Todo application with a FastAPI backend, SQLite persistence, and a Vite
 
 ## Local development overview
 
-KAN-15 documents the intended full Todo application as a React frontend calling a FastAPI backend backed by SQLite. This checkout now includes the FastAPI backend plus a dedicated `frontend/` Vite React workspace for future Todo UI work. Docker assets are still not present in this repository.
+KAN-15 documents the intended full Todo application as a React frontend calling a FastAPI backend backed by SQLite. This checkout now includes the FastAPI backend, a dedicated `frontend/` Vite React workspace, and a Docker Compose workflow that starts both services together.
 
 ## Prerequisites
 
 - **Python 3.11+** for the KAN-15 local development baseline. The current package metadata in `pyproject.toml` still declares `requires-python = ">=3.10"`.
 - **Node.js 18+** for the checked-in Vite React frontend workspace under `frontend/`.
-- **Docker** is optional for teams that run the stack in containers, but this repository does not include Docker assets.
+- **Docker** with the Compose plugin if you want to run the full stack in containers.
 
 ## Architecture
 
@@ -23,6 +23,26 @@ The intended local application flow is:
 - **SQLite database**: stores Todo records and is configured through `DATABASE_URL`, which defaults to `sqlite:///./todo.db`.
 
 On backend startup, the application creates its SQLAlchemy tables automatically.
+
+## Docker Compose local development
+
+Start the FastAPI API and the Vite frontend together with one command:
+
+```bash
+docker compose up
+```
+
+Compose builds the images automatically on first run, mounts the backend and frontend source trees for live reload, exposes the backend on `http://localhost:8000`, and exposes the frontend on `http://localhost:5173`.
+
+The frontend dev server keeps `VITE_API_BASE_URL=/api` and proxies API traffic to the Compose service name `http://api:8000`, so browser requests continue to work without host-only `localhost` assumptions inside the container network.
+
+The API container stores the default SQLite file at `./todo.db` in the repository root through `DATABASE_URL=sqlite:////workspace/todo.db`.
+
+When you change Python or Node dependencies, rebuild the images on the next run:
+
+```bash
+docker compose up --build
+```
 
 ## Backend setup and run
 
@@ -117,7 +137,7 @@ The starter shell performs a backend health check through the shared frontend AP
 
 ## Docker status for this checkout
 
-Docker support is optional in KAN-15, but no Docker workflow files are present in this repository snapshot.
+This repository includes a local Docker Compose workflow in `docker-compose.yml`, a backend image definition in `Dockerfile.api`, and a frontend image definition in `frontend/Dockerfile`.
 
 ## API Endpoints
 
