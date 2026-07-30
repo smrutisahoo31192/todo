@@ -51,5 +51,6 @@ describe('App', () => {
     expect(
       await screen.findByText(/backend request failed \(503\)\. start the fastapi app/i),
     ).toBeInTheDocument();
+    expect(screen.getByText(/verify vite_api_url points at the backend/i)).toBeInTheDocument();
   });
 });

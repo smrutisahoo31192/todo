@@ -33,7 +33,7 @@ function App() {
 
         const message =
           error instanceof ApiError
-            ? `Backend request failed (${error.status}). Start the FastAPI app and verify the frontend proxy target.`
+            ? `Backend request failed (${error.status}). Start the FastAPI app and verify VITE_API_URL points at the backend.`
             : 'Unable to reach the backend. Start the FastAPI app and verify the frontend environment configuration.';
 
         setHealthState({ kind: 'error', message });
@@ -66,7 +66,7 @@ function App() {
             <h2>Backend target</h2>
             <p>
               Requests default to <code>{getApiBaseUrl()}</code> and can be changed with
-              <code> VITE_API_BASE_URL</code>.
+              <code> VITE_API_URL</code>.
             </p>
           </article>
           <article className="status-card">
