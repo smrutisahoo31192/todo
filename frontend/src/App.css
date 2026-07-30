@@ -1,0 +1,92 @@
+.app-shell {
+  min-height: 100vh;
+  padding: 48px 20px;
+}
+
+.hero-card,
+.roadmap-card {
+  width: min(960px, 100%);
+  margin: 0 auto 24px;
+  padding: 32px;
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(12px);
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.8rem;
+  color: #38bdf8;
+}
+
+h1,
+h2,
+p,
+ol {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3.75rem);
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+
+.lead {
+  max-width: 60ch;
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.status-card {
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.status-card h2,
+.roadmap-card h2 {
+  margin-bottom: 12px;
+  font-size: 1.05rem;
+}
+
+.status-card p,
+.roadmap-card li {
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  color: #7dd3fc;
+}
+
+.roadmap-card ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 24px 16px;
+  }
+
+  .hero-card,
+  .roadmap-card {
+    padding: 24px;
+    border-radius: 20px;
+  }
+}
