@@ -15,7 +15,7 @@ describe('api client', () => {
   });
 
   it('uses the configured API base URL for backend requests', async () => {
-    vi.stubEnv('VITE_API_BASE_URL', '/backend');
+    vi.stubEnv('VITE_API_URL', 'http://localhost:9000');
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ status: 'ok' }), {
         status: 200,
@@ -24,13 +24,17 @@ describe('api client', () => {
     );
 
     await expect(healthApi.check()).resolves.toEqual({ status: 'ok' });
-    expect(getApiBaseUrl()).toBe('/backend');
+    expect(getApiBaseUrl()).toBe('http://localhost:9000');
     expect(fetchMock).toHaveBeenCalledWith(
-      '/backend/health',
+      'http://localhost:9000/health',
       expect.objectContaining({
         headers: expect.objectContaining({ Accept: 'application/json' }),
       }),
     );
+  });
+
+  it('defaults to the documented local backend URL when no env override is set', () => {
+    expect(getApiBaseUrl()).toBe('http://localhost:8000');
   });
 
   it('raises an ApiError when the backend responds with a failure status', async () => {

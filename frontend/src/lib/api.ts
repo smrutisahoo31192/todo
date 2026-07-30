@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE_URL = '/api';
+const DEFAULT_API_URL = 'http://localhost:8000';
 
 export class ApiError extends Error {
   readonly status: number;
@@ -26,7 +26,7 @@ const joinApiPath = (baseUrl: string, path: string): string => {
 };
 
 export const getApiBaseUrl = (): string =>
-  normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL);
+  normalizeBaseUrl(import.meta.env.VITE_API_URL || DEFAULT_API_URL);
 
 export async function apiRequest<T>(
   path: string,

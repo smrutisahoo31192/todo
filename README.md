@@ -53,7 +53,10 @@ cp .env.example .env
 - **`DATABASE_URL`** (optional): SQLite database location
   - Default: `sqlite:///./todo.db` (in the project root)
   - Example: `DATABASE_URL=sqlite:////tmp/todo.db` (absolute path)
-  - The `.env` file is not tracked by git and will not be committed
+- **`CORS_ALLOW_ORIGINS`**: comma-separated browser origin allowlist for local development
+  - Default example: `http://localhost:5173`
+  - The checked-in example allows the Vite frontend dev server to call FastAPI directly from the browser
+- The `.env` file is not tracked by git and will not be committed
 
 ### Start the FastAPI server
 
@@ -88,11 +91,8 @@ cp frontend/.env.example frontend/.env.local
 
 #### Frontend environment variables
 
-- **`VITE_API_BASE_URL`**: base URL used by the browser app for API requests
-  - Default: `/api`
-  - Use `/api` together with the Vite dev proxy for local development
-- **`VITE_API_PROXY_TARGET`**: backend origin that the Vite development server proxies `/api/*` requests to
-  - Default: `http://localhost:8000`
+- **`VITE_API_URL`**: backend base URL used by the browser app for API requests
+  - Default example: `http://localhost:8000`
   - Change this when pointing the frontend at a different local FastAPI server
 
 ### Start the frontend development server
@@ -113,7 +113,7 @@ npm run build
 npm run preview
 ```
 
-The starter shell performs a backend health check through the shared frontend API client so developers can confirm the React app is wired to FastAPI.
+The starter shell performs a backend health check through the shared frontend API client so developers can confirm the React app is wired to FastAPI with the documented env contract.
 
 ## Docker status for this checkout
 
