@@ -36,6 +36,8 @@ Compose builds the images automatically on first run, mounts the backend and fro
 
 The frontend dev server keeps `VITE_API_BASE_URL=/api` and proxies API traffic to the Compose service name `http://api:8000`, so browser requests continue to work without host-only `localhost` assumptions inside the container network.
 
+In the Compose workflow this proxy target is supplied as `VITE_API_PROXY_TARGET=http://api:8000`.
+
 The API container stores the default SQLite file at `./todo.db` in the repository root through `DATABASE_URL=sqlite:////workspace/todo.db`.
 
 When you change Python or Node dependencies, rebuild the images on the next run:
