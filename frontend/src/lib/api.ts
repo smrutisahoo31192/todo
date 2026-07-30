@@ -59,7 +59,17 @@ export interface HealthResponse {
   status: string;
 }
 
+export interface Todo {
+  readonly id: number;
+  readonly title: string;
+  readonly completed: boolean;
+}
+
 export const healthApi = {
   check: (signal?: AbortSignal): Promise<HealthResponse> =>
     apiRequest<HealthResponse>('/health', { signal }),
+};
+
+export const todosApi = {
+  list: (signal?: AbortSignal): Promise<readonly Todo[]> => apiRequest<readonly Todo[]>('/todos', { signal }),
 };
