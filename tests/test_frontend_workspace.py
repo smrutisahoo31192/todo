@@ -58,6 +58,19 @@ def test_frontend_package_manifest_exposes_expected_workflows(frontend_dir: Path
     }
 
 
+def test_backend_env_example_documents_local_database_and_cors_settings() -> None:
+    backend_env_example = (REPO_ROOT / ".env.example").read_text()
+
+    assert "DATABASE_URL=sqlite:///./todo.db" in backend_env_example
+    assert "CORS_ALLOW_ORIGINS=http://localhost:5173" in backend_env_example
+
+
+def test_frontend_env_example_documents_local_api_url(frontend_dir: Path) -> None:
+    frontend_env_example = (frontend_dir / ".env.example").read_text()
+
+    assert "VITE_API_URL=http://localhost:8000" in frontend_env_example
+
+
 def test_frontend_vitest_suite_passes(frontend_dependencies: Path) -> None:
     output = run_frontend_command(frontend_dependencies, "npm", "test", "--", "--run")
 
