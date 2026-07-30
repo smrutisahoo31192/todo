@@ -1,15 +1,15 @@
 # todo
 
-A simple Todo backend built with FastAPI and SQLite.
+A simple Todo application with a FastAPI backend, SQLite persistence, and a Vite + React frontend workspace.
 
 ## Local development overview
 
-KAN-15 documents the intended full Todo application as a React frontend calling a FastAPI backend backed by SQLite. This checkout currently contains the FastAPI backend and SQLite configuration only. There is no checked-in React frontend source, `package.json`, Vite config, `Dockerfile`, or `docker-compose` workflow in this repository.
+KAN-15 documents the intended full Todo application as a React frontend calling a FastAPI backend backed by SQLite. This checkout now includes the FastAPI backend plus a dedicated `frontend/` Vite React workspace for future Todo UI work. Docker assets are still not present in this repository.
 
 ## Prerequisites
 
 - **Python 3.11+** for the KAN-15 local development baseline. The current package metadata in `pyproject.toml` still declares `requires-python = ">=3.10"`.
-- **Node.js 18+** for the React frontend described by KAN-15. This checkout does not include the frontend source or a Node package manifest.
+- **Node.js 18+** for the checked-in Vite React frontend workspace under `frontend/`.
 - **Docker** is optional for teams that run the stack in containers, but this repository does not include Docker assets.
 
 ## Architecture
@@ -69,9 +69,50 @@ FastAPI serves the interactive API docs at:
 
 - `http://localhost:8000/docs`
 
-## Frontend status for this checkout
+## Frontend setup and run
 
-KAN-15 assumes a React frontend that runs with Node 18+, but this checkout does not include frontend source files or a frontend package manifest. Because there is no verified frontend project in this repository, there is no truthful install command or React development server command to document from this branch alone.
+### Install frontend dependencies
+
+```bash
+cd frontend
+npm install
+```
+
+### Configure frontend environment
+
+Create a local frontend environment file from the checked-in example:
+
+```bash
+cp frontend/.env.example frontend/.env.local
+```
+
+#### Frontend environment variables
+
+- **`VITE_API_BASE_URL`**: base URL used by the browser app for API requests
+  - Default: `/api`
+  - Use `/api` together with the Vite dev proxy for local development
+- **`VITE_API_PROXY_TARGET`**: backend origin that the Vite development server proxies `/api/*` requests to
+  - Default: `http://localhost:8000`
+  - Change this when pointing the frontend at a different local FastAPI server
+
+### Start the frontend development server
+
+```bash
+cd frontend
+npm run dev
+```
+
+The frontend dev server will be available at `http://localhost:5173` by default.
+
+### Build and preview the frontend
+
+```bash
+cd frontend
+npm run build
+npm run preview
+```
+
+The starter shell performs a backend health check through the shared frontend API client so developers can confirm the React app is wired to FastAPI.
 
 ## Docker status for this checkout
 
