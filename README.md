@@ -108,6 +108,7 @@ The frontend dev server will be available at `http://localhost:5173` by default.
 
 ```bash
 cd frontend
+npm test -- --run
 npm run build
 npm run preview
 ```
