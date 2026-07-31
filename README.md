@@ -88,7 +88,7 @@ cp frontend/.env.example frontend/.env.local
 
 #### Frontend environment variables
 
-- **`VITE_API_BASE_URL`**: base URL used by the browser app for API requests
+- **`VITE_API_URL`**: base URL used by the browser app for API requests
   - Default: `/api`
   - Use `/api` together with the Vite dev proxy for local development
 - **`VITE_API_PROXY_TARGET`**: backend origin that the Vite development server proxies `/api/*` requests to

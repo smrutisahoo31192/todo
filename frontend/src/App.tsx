@@ -1,94 +1,256 @@
-import { useEffect, useState } from 'react';
-import { ApiError, getApiBaseUrl, healthApi } from './lib/api';
+import { type FormEvent, useEffect, useMemo, useState } from 'react';
+import { ApiError, getApiBaseUrl, todoApi, type Todo } from './lib/api';
 import './App.css';
+import { TodoListSection } from './components/TodoListSection';
 
-type HealthState =
+type TodosState =
   | { kind: 'loading' }
-  | { kind: 'success'; status: string }
+  | { kind: 'ready' }
   | { kind: 'error'; message: string };
 
-const roadmapItems = [
-  'Connect Todo list and mutations through the shared API client.',
-  'Add forms, loading states, and optimistic UI for task updates.',
-  'Choose a design system and component structure for feature work.',
-];
+type MutationState =
+  | { kind: 'idle' }
+  | { kind: 'creating' }
+  | { kind: 'updating'; todoId: number }
+  | { kind: 'deleting'; todoId: number };
+
+const formatApiError = (error: unknown, actionLabel: string): string => {
+  if (error instanceof ApiError) {
+    return `${actionLabel} failed (${error.status}). Check the FastAPI backend and try again.`;
+  }
+
+  return `${actionLabel} failed. Check the backend connection and try again.`;
+};
+
+const buildDraftTitles = (nextTodos: readonly Todo[]): Record<number, string> =>
+  nextTodos.reduce<Record<number, string>>((draftMap, todo) => {
+    draftMap[todo.id] = todo.title;
+    return draftMap;
+  }, {});
 
 function App() {
-  const [healthState, setHealthState] = useState<HealthState>({ kind: 'loading' });
+  const [todos, setTodos] = useState<readonly Todo[]>([]);
+  const [draftTitles, setDraftTitles] = useState<Record<number, string>>({});
+  const [newTodoTitle, setNewTodoTitle] = useState('');
+  const [todosState, setTodosState] = useState<TodosState>({ kind: 'loading' });
+  const [mutationState, setMutationState] = useState<MutationState>({ kind: 'idle' });
+  const [mutationMessage, setMutationMessage] = useState<string | null>(null);
+
+  const isMutating = mutationState.kind !== 'idle';
+
+  const mutationStatusLabel = useMemo(() => {
+    switch (mutationState.kind) {
+      case 'idle':
+        return null;
+      case 'creating':
+        return 'Creating todo…';
+      case 'updating':
+        return 'Saving todo…';
+      case 'deleting':
+        return 'Deleting todo…';
+    }
+  }, [mutationState]);
+
+  const syncDrafts = (nextTodos: readonly Todo[]): void => {
+    setDraftTitles(buildDraftTitles(nextTodos));
+  };
+
+  const replaceTodo = (nextTodo: Todo): void => {
+    const nextTodos = todos.map((currentTodo) => (currentTodo.id === nextTodo.id ? nextTodo : currentTodo));
+
+    setTodos(nextTodos);
+    syncDrafts(nextTodos);
+  };
+
+  const loadTodos = async (signal?: AbortSignal): Promise<void> => {
+    setTodosState({ kind: 'loading' });
+
+    try {
+      const nextTodos = await todoApi.list(signal);
+
+      if (signal?.aborted) {
+        return;
+      }
+
+      setTodos(nextTodos);
+      syncDrafts(nextTodos);
+      setTodosState({ kind: 'ready' });
+    } catch (error) {
+      if (signal?.aborted) {
+        return;
+      }
+
+      setTodosState({ kind: 'error', message: formatApiError(error, 'Loading todos') });
+    }
+  };
 
   useEffect(() => {
     const controller = new AbortController();
 
-    async function loadHealth(): Promise<void> {
-      try {
-        const response = await healthApi.check(controller.signal);
-
-        if (!controller.signal.aborted) {
-          setHealthState({ kind: 'success', status: response.status });
-        }
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        const message =
-          error instanceof ApiError
-            ? `Backend request failed (${error.status}). Start the FastAPI app and verify the frontend proxy target.`
-            : 'Unable to reach the backend. Start the FastAPI app and verify the frontend environment configuration.';
-
-        setHealthState({ kind: 'error', message });
-      }
-    }
-
-    void loadHealth();
+    void loadTodos(controller.signal);
 
     return () => {
       controller.abort();
     };
   }, []);
 
+  const handleCreateTodo = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+
+    const trimmedTitle = newTodoTitle.trim();
+
+    if (trimmedTitle.length === 0) {
+      setMutationMessage('Enter a todo title before creating a task.');
+      return;
+    }
+
+    setMutationState({ kind: 'creating' });
+    setMutationMessage(null);
+
+    try {
+      const createdTodo = await todoApi.create({ title: trimmedTitle });
+      const nextTodos = [...todos, createdTodo];
+
+      setTodos(nextTodos);
+      syncDrafts(nextTodos);
+      setNewTodoTitle('');
+    } catch (error) {
+      setMutationMessage(formatApiError(error, 'Creating todo'));
+    } finally {
+      setMutationState({ kind: 'idle' });
+    }
+  };
+
+  const handleToggleTodo = async (todo: Todo, completed: boolean): Promise<void> => {
+    setMutationState({ kind: 'updating', todoId: todo.id });
+    setMutationMessage(null);
+
+    try {
+      const updatedTodo = await todoApi.update(todo.id, {
+        title: draftTitles[todo.id] ?? todo.title,
+        completed,
+      });
+      replaceTodo(updatedTodo);
+    } catch (error) {
+      setMutationMessage(formatApiError(error, 'Updating todo'));
+    } finally {
+      setMutationState({ kind: 'idle' });
+    }
+  };
+
+  const handleSaveTitle = async (todo: Todo): Promise<void> => {
+    const nextTitle = (draftTitles[todo.id] ?? todo.title).trim();
+
+    if (nextTitle.length === 0) {
+      setMutationMessage('Todo titles cannot be empty.');
+      return;
+    }
+
+    setMutationState({ kind: 'updating', todoId: todo.id });
+    setMutationMessage(null);
+
+    try {
+      const updatedTodo = await todoApi.update(todo.id, {
+        title: nextTitle,
+        completed: todo.completed,
+      });
+      replaceTodo(updatedTodo);
+    } catch (error) {
+      setMutationMessage(formatApiError(error, 'Saving todo'));
+    } finally {
+      setMutationState({ kind: 'idle' });
+    }
+  };
+
+  const handleDeleteTodo = async (todoId: number): Promise<void> => {
+    setMutationState({ kind: 'deleting', todoId });
+    setMutationMessage(null);
+
+    try {
+      await todoApi.remove(todoId);
+      const nextTodos = todos.filter((todo) => todo.id !== todoId);
+
+      setTodos(nextTodos);
+      syncDrafts(nextTodos);
+    } catch (error) {
+      setMutationMessage(formatApiError(error, 'Deleting todo'));
+    } finally {
+      setMutationState({ kind: 'idle' });
+    }
+  };
+
   return (
     <main className="app-shell">
       <section className="hero-card">
-        <p className="eyebrow">Todo frontend bootstrap</p>
-        <h1>React + Vite workspace ready for Todo UI work</h1>
+        <p className="eyebrow">Todo API integration</p>
+        <h1>Manage your live backend tasks from one workspace</h1>
         <p className="lead">
-          This starter shell confirms the frontend toolchain is wired up and ready to
-          grow into the full Todo experience.
+          The React app now reads and updates the FastAPI Todo service directly, using
+          <code> {getApiBaseUrl()}</code> as its browser API base.
         </p>
 
-        <div className="status-grid">
-          <article className="status-card">
-            <h2>Frontend</h2>
-            <p>Vite development server, TypeScript build, and preview scripts are configured.</p>
-          </article>
-          <article className="status-card">
-            <h2>Backend target</h2>
-            <p>
-              Requests default to <code>{getApiBaseUrl()}</code> and can be changed with
-              <code> VITE_API_BASE_URL</code>.
-            </p>
-          </article>
-          <article className="status-card">
-            <h2>Health check</h2>
-            {healthState.kind === 'loading' ? <p>Checking FastAPI backend…</p> : null}
-            {healthState.kind === 'success' ? (
-              <p>
-                Backend responded successfully with status <strong>{healthState.status}</strong>.
-              </p>
-            ) : null}
-            {healthState.kind === 'error' ? <p>{healthState.message}</p> : null}
-          </article>
-        </div>
-      </section>
+        <form className="todo-create-form" onSubmit={(event) => void handleCreateTodo(event)}>
+          <label className="field-label" htmlFor="new-todo-title">
+            Add a new todo
+          </label>
+          <div className="field-row">
+            <input
+              id="new-todo-title"
+              className="todo-input"
+              placeholder="What needs to get done?"
+              value={newTodoTitle}
+              onChange={(event) => setNewTodoTitle(event.target.value)}
+              disabled={isMutating}
+            />
+            <button className="primary-button" type="submit" disabled={isMutating}>
+              Add todo
+            </button>
+          </div>
+        </form>
 
-      <section className="roadmap-card">
-        <h2>Suggested next steps</h2>
-        <ol>
-          {roadmapItems.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
+        {todosState.kind === 'loading' ? (
+          <p className="status-message" role="status">
+            Loading todos…
+          </p>
+        ) : null}
+
+        {todosState.kind === 'error' ? (
+          <div className="status-panel error-panel" role="alert">
+            <p>{todosState.message}</p>
+            <button className="secondary-button" type="button" onClick={() => void loadTodos()}>
+              Retry load
+            </button>
+          </div>
+        ) : null}
+
+        {mutationStatusLabel ? (
+          <p className="status-message" role="status">
+            {mutationStatusLabel}
+          </p>
+        ) : null}
+
+        {mutationMessage ? (
+          <p className="status-message error-text" role="alert">
+            {mutationMessage}
+          </p>
+        ) : null}
+
+        {todosState.kind === 'ready' ? (
+          <TodoListSection
+            todos={todos}
+            draftTitles={draftTitles}
+            mutationState={mutationState}
+            onDraftTitleChange={(todoId, nextTitle) =>
+              setDraftTitles((currentDraftTitles) => ({
+                ...currentDraftTitles,
+                [todoId]: nextTitle,
+              }))
+            }
+            onSaveTitle={(todo) => void handleSaveTitle(todo)}
+            onToggleTodo={(todo, completed) => void handleToggleTodo(todo, completed)}
+            onDeleteTodo={(todoId) => void handleDeleteTodo(todoId)}
+          />
+        ) : null}
       </section>
     </main>
   );
