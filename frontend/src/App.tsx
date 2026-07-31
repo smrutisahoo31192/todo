@@ -1,94 +1,201 @@
-import { useEffect, useState } from 'react';
-import { ApiError, getApiBaseUrl, healthApi } from './lib/api';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import './App.css';
+import './todo-panels.css';
+import { TodoFormPanel } from './components/TodoFormPanel';
+import { TodoListPanel } from './components/TodoListPanel';
+import { ApiError, todoApi, type Todo } from './lib/api';
 
-type HealthState =
-  | { kind: 'loading' }
-  | { kind: 'success'; status: string }
-  | { kind: 'error'; message: string };
+type TodoFormState = {
+  title: string;
+  completed: boolean;
+};
 
-const roadmapItems = [
-  'Connect Todo list and mutations through the shared API client.',
-  'Add forms, loading states, and optimistic UI for task updates.',
-  'Choose a design system and component structure for feature work.',
-];
+const createEmptyFormState = (): TodoFormState => ({ title: '', completed: false });
+
+const getRequestErrorMessage = (error: unknown): string => {
+  if (error instanceof ApiError) {
+    return `Backend request failed (${error.status}). Try again after the API is available.`;
+  }
+
+  return 'Unable to reach the Todo API. Start the FastAPI app and verify the frontend proxy configuration.';
+};
 
 function App() {
-  const [healthState, setHealthState] = useState<HealthState>({ kind: 'loading' });
+  const [todos, setTodos] = useState<readonly Todo[]>([]);
+  const [isLoadingTodos, setIsLoadingTodos] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const [formState, setFormState] = useState<TodoFormState>(createEmptyFormState);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const completedCount = useMemo(
+    () => todos.filter((todo) => todo.completed).length,
+    [todos],
+  );
+
+  const resetCreateForm = (): void => {
+    setEditingTodo(null);
+    setFormState(createEmptyFormState());
+    setValidationError(null);
+    setSubmitError(null);
+  };
+
+  const loadTodos = async (signal?: AbortSignal): Promise<void> => {
+    try {
+      setLoadError(null);
+      const nextTodos = await todoApi.list(signal);
+
+      if (signal?.aborted) {
+        return;
+      }
+
+      setTodos(nextTodos);
+    } catch (error) {
+      if (signal?.aborted) {
+        return;
+      }
+
+      setLoadError(getRequestErrorMessage(error));
+    } finally {
+      if (!signal?.aborted) {
+        setIsLoadingTodos(false);
+      }
+    }
+  };
 
   useEffect(() => {
     const controller = new AbortController();
 
-    async function loadHealth(): Promise<void> {
-      try {
-        const response = await healthApi.check(controller.signal);
-
-        if (!controller.signal.aborted) {
-          setHealthState({ kind: 'success', status: response.status });
-        }
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        const message =
-          error instanceof ApiError
-            ? `Backend request failed (${error.status}). Start the FastAPI app and verify the frontend proxy target.`
-            : 'Unable to reach the backend. Start the FastAPI app and verify the frontend environment configuration.';
-
-        setHealthState({ kind: 'error', message });
-      }
-    }
-
-    void loadHealth();
+    void loadTodos(controller.signal);
 
     return () => {
       controller.abort();
     };
   }, []);
 
+  const handleEditSelection = (todo: Todo): void => {
+    setEditingTodo(todo);
+    setFormState({ title: todo.title, completed: todo.completed });
+    setValidationError(null);
+    setSubmitError(null);
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+
+    const trimmedTitle = formState.title.trim();
+
+    if (trimmedTitle.length === 0) {
+      setValidationError('Title is required.');
+      setSubmitError(null);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setValidationError(null);
+    setSubmitError(null);
+
+    try {
+      if (editingTodo === null) {
+        const createdTodo = await todoApi.create({ title: trimmedTitle });
+
+        if (formState.completed) {
+          await todoApi.update(createdTodo.id, { title: trimmedTitle, completed: true });
+        }
+      } else {
+        await todoApi.update(editingTodo.id, {
+          title: trimmedTitle,
+          completed: formState.completed,
+        });
+      }
+
+      await loadTodos();
+      resetCreateForm();
+    } catch (error) {
+      setSubmitError(getRequestErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const heading = editingTodo === null ? 'Add a todo' : 'Edit todo';
+  const submitLabel = isSubmitting
+    ? editingTodo === null
+      ? 'Saving…'
+      : 'Updating…'
+    : editingTodo === null
+      ? 'Add todo'
+      : 'Save changes';
+
   return (
     <main className="app-shell">
-      <section className="hero-card">
-        <p className="eyebrow">Todo frontend bootstrap</p>
-        <h1>React + Vite workspace ready for Todo UI work</h1>
-        <p className="lead">
-          This starter shell confirms the frontend toolchain is wired up and ready to
-          grow into the full Todo experience.
-        </p>
-
-        <div className="status-grid">
-          <article className="status-card">
-            <h2>Frontend</h2>
-            <p>Vite development server, TypeScript build, and preview scripts are configured.</p>
-          </article>
-          <article className="status-card">
-            <h2>Backend target</h2>
-            <p>
-              Requests default to <code>{getApiBaseUrl()}</code> and can be changed with
-              <code> VITE_API_BASE_URL</code>.
-            </p>
-          </article>
-          <article className="status-card">
-            <h2>Health check</h2>
-            {healthState.kind === 'loading' ? <p>Checking FastAPI backend…</p> : null}
-            {healthState.kind === 'success' ? (
-              <p>
-                Backend responded successfully with status <strong>{healthState.status}</strong>.
-              </p>
-            ) : null}
-            {healthState.kind === 'error' ? <p>{healthState.message}</p> : null}
-          </article>
+      <section className="app-hero">
+        <div>
+          <p className="eyebrow">Todo workspace</p>
+          <h1>Capture new tasks and fix existing ones from one shared form.</h1>
+          <p className="lead">
+            The React workspace now talks directly to the Todo API so you can create,
+            review, and edit todos without leaving the main screen.
+          </p>
         </div>
+
+        <dl className="hero-stats" aria-label="Todo summary">
+          <div className="stat-card">
+            <dt>Total todos</dt>
+            <dd>{todos.length}</dd>
+          </div>
+          <div className="stat-card">
+            <dt>Completed</dt>
+            <dd>{completedCount}</dd>
+          </div>
+          <div className="stat-card">
+            <dt>In progress</dt>
+            <dd>{todos.length - completedCount}</dd>
+          </div>
+        </dl>
       </section>
 
-      <section className="roadmap-card">
-        <h2>Suggested next steps</h2>
-        <ol>
-          {roadmapItems.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ol>
+      <section className="workspace-grid">
+        <TodoListPanel
+          isLoadingTodos={isLoadingTodos}
+          loadError={loadError}
+          todos={todos}
+          onRefresh={() => {
+            setIsLoadingTodos(true);
+            void loadTodos();
+          }}
+          onEdit={handleEditSelection}
+        />
+
+        <TodoFormPanel
+          heading={heading}
+          submitLabel={submitLabel}
+          editingTodoId={editingTodo?.id ?? null}
+          formState={formState}
+          validationError={validationError}
+          submitError={submitError}
+          isSubmitting={isSubmitting}
+          onSubmit={(event) => {
+            void handleSubmit(event);
+          }}
+          onTitleChange={(nextTitle) => {
+            setFormState((currentState) => ({
+              ...currentState,
+              title: nextTitle,
+            }));
+            setValidationError(null);
+            setSubmitError(null);
+          }}
+          onCompletedChange={(nextCompleted) => {
+            setFormState((currentState) => ({
+              ...currentState,
+              completed: nextCompleted,
+            }));
+          }}
+          onCancelEdit={resetCreateForm}
+        />
       </section>
     </main>
   );
