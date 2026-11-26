@@ -32,6 +32,73 @@ def test_list_todos_returns_all():
     assert data[1]["title"] == "Task B"
 
 
+def test_list_todos_default_limit_is_50():
+    session = TestingSessionLocal()
+    for index in range(51):
+        storage.create(session, f"Task {index}")
+    session.close()
+
+    r = client.get("/todos")
+    assert r.status_code == 200
+    data = r.json()
+    assert len(data) == 50
+    assert data[0]["title"] == "Task 0"
+    assert data[-1]["title"] == "Task 49"
+
+
+def test_list_todos_limit():
+    session = TestingSessionLocal()
+    for title in ("Task A", "Task B", "Task C"):
+        storage.create(session, title)
+    session.close()
+
+    r = client.get("/todos", params={"limit": 2})
+    assert r.status_code == 200
+    assert [todo["title"] for todo in r.json()] == ["Task A", "Task B"]
+
+
+def test_list_todos_offset():
+    session = TestingSessionLocal()
+    for title in ("Task A", "Task B", "Task C"):
+        storage.create(session, title)
+    session.close()
+
+    r = client.get("/todos", params={"offset": 1})
+    assert r.status_code == 200
+    assert [todo["title"] for todo in r.json()] == ["Task B", "Task C"]
+
+
+def test_list_todos_limit_and_offset():
+    session = TestingSessionLocal()
+    for title in ("Task A", "Task B", "Task C", "Task D"):
+        storage.create(session, title)
+    session.close()
+
+    r = client.get("/todos", params={"limit": 2, "offset": 1})
+    assert r.status_code == 200
+    assert [todo["title"] for todo in r.json()] == ["Task B", "Task C"]
+
+
+def test_list_todos_offset_beyond_results():
+    session = TestingSessionLocal()
+    storage.create(session, "Task A")
+    session.close()
+
+    r = client.get("/todos", params={"offset": 10})
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+def test_list_todos_rejects_non_positive_limit():
+    r = client.get("/todos", params={"limit": 0})
+    assert r.status_code == 422
+
+
+def test_list_todos_rejects_negative_offset():
+    r = client.get("/todos", params={"offset": -1})
+    assert r.status_code == 422
+
+
 # ---------------------------------------------------------------------------
 # POST /todos
 # ---------------------------------------------------------------------------

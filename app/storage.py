@@ -3,9 +3,14 @@ from sqlalchemy.orm import Session
 from app.models import Todo
 
 
-def get_all(session: Session) -> list[dict]:
-    """Get all todos."""
-    todos = session.query(Todo).all()
+def get_all(
+    session: Session, limit: int | None = None, offset: int = 0
+) -> list[dict]:
+    """Get todos with optional limit and offset."""
+    query = session.query(Todo).order_by(Todo.id).offset(offset)
+    if limit is not None:
+        query = query.limit(limit)
+    todos = query.all()
     return [
         {"id": todo.id, "title": todo.title, "completed": todo.completed}
         for todo in todos

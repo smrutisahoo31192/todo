@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy.orm import Session
 
 from app import storage
@@ -9,8 +9,12 @@ router = APIRouter()
 
 
 @router.get("", response_model=list[TodoResponse])
-def list_todos(session: Session = Depends(get_session)) -> list[dict]:
-    return storage.get_all(session)
+def list_todos(
+    limit: int = Query(50, ge=1),
+    offset: int = Query(0, ge=0),
+    session: Session = Depends(get_session),
+) -> list[dict]:
+    return storage.get_all(session, limit=limit, offset=offset)
 
 
 @router.post("", response_model=TodoResponse, status_code=201)

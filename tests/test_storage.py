@@ -26,6 +26,15 @@ def test_get_all_returns_created_todos(db_session: Session) -> None:
     ]
 
 
+def test_get_all_applies_limit_and_offset(db_session: Session) -> None:
+    for title in ("Task A", "Task B", "Task C", "Task D"):
+        storage.create(db_session, title)
+
+    todos = storage.get_all(db_session, limit=2, offset=1)
+
+    assert [todo["title"] for todo in todos] == ["Task B", "Task C"]
+
+
 def test_update_replaces_title_and_completed_state(db_session: Session) -> None:
     created = storage.create(db_session, "Old title")
 

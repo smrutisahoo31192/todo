@@ -122,7 +122,7 @@ Docker support is optional in KAN-15, but no Docker workflow files are present i
 ## API Endpoints
 
 - `GET /health` - Health check
-- `GET /todos` - List all todos
+- `GET /todos` - List todos (`limit` defaults to 50, `offset` defaults to 0)
 - `POST /todos` - Create a new todo
 - `GET /todos/{id}` - Get a specific todo
 - `PUT /todos/{id}` - Update a todo (full replacement)
