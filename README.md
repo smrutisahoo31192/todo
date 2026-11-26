@@ -134,3 +134,7 @@ Docker support is optional in KAN-15, but no Docker workflow files are present i
 ```bash
 pytest
 ```
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
