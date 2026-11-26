@@ -133,6 +133,15 @@ def test_put_todo_whitespace_title():
     assert r.status_code == 422
 
 
+def test_put_todo_empty_title():
+    session = TestingSessionLocal()
+    created = storage.create(session, "Foo")
+    session.close()
+
+    r = client.put(f"/todos/{created['id']}", json={"title": "", "completed": True})
+    assert r.status_code == 422
+
+
 # ---------------------------------------------------------------------------
 # PATCH /todos/{id}
 # ---------------------------------------------------------------------------
@@ -173,6 +182,15 @@ def test_patch_todo_whitespace_title():
     session.close()
 
     r = client.patch(f"/todos/{created['id']}", json={"title": "   "})
+    assert r.status_code == 422
+
+
+def test_patch_todo_empty_title():
+    session = TestingSessionLocal()
+    created = storage.create(session, "Initial")
+    session.close()
+
+    r = client.patch(f"/todos/{created['id']}", json={"title": ""})
     assert r.status_code == 422
 
 
