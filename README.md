@@ -129,8 +129,23 @@ Docker support is optional in KAN-15, but no Docker workflow files are present i
 - `PATCH /todos/{id}` - Partially update a todo
 - `DELETE /todos/{id}` - Delete a todo
 
-## Testing
+## Running the tests
+
+### Backend
+
+Install the development dependencies, then run pytest from the project root:
 
 ```bash
+pip install -e ".[dev]"
 pytest
+```
+
+### Frontend
+
+Install the frontend dependencies, then run the Vitest suite once:
+
+```bash
+cd frontend
+npm install
+npm test -- --run
 ```
