@@ -43,6 +43,23 @@ describe('api client', () => {
     });
   });
 
+  it('surfaces the status message and response body for a JSON API error response', async () => {
+    const errorBody = JSON.stringify({ detail: 'Invalid request' });
+    fetchMock.mockResolvedValue(
+      new Response(errorBody, {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+
+    await expect(healthApi.check()).rejects.toMatchObject({
+      name: 'ApiError',
+      message: 'API request failed with status 400',
+      status: 400,
+      body: errorBody,
+    });
+  });
+
   it('returns undefined for successful no-content responses', async () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
 
