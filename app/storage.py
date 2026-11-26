@@ -4,7 +4,14 @@ from app.models import Todo
 
 
 def get_all(session: Session) -> list[dict]:
-    """Get all todos."""
+    """Return all todos as dictionaries.
+
+    Args:
+        session: Database session used for the query.
+
+    Returns:
+        A list of dictionaries with ``id``, ``title``, and ``completed`` keys.
+    """
     todos = session.query(Todo).all()
     return [
         {"id": todo.id, "title": todo.title, "completed": todo.completed}
@@ -13,7 +20,16 @@ def get_all(session: Session) -> list[dict]:
 
 
 def get_by_id(session: Session, todo_id: int) -> dict | None:
-    """Get a todo by ID."""
+    """Return a single todo by ID.
+
+    Args:
+        session: Database session used for the query.
+        todo_id: ID of the todo to retrieve.
+
+    Returns:
+        A dictionary with ``id``, ``title``, and ``completed`` keys, or None
+        if no todo has that ID.
+    """
     todo = session.query(Todo).filter_by(id=todo_id).first()
     if todo is None:
         return None
@@ -21,7 +37,15 @@ def get_by_id(session: Session, todo_id: int) -> dict | None:
 
 
 def create(session: Session, title: str) -> dict:
-    """Create a new todo."""
+    """Create and persist a new, incomplete todo.
+
+    Args:
+        session: Database session used to add and commit the todo.
+        title: Title of the new todo.
+
+    Returns:
+        A dictionary with ``id``, ``title``, and ``completed`` keys.
+    """
     todo = Todo(title=title, completed=False)
     session.add(todo)
     session.commit()
@@ -30,7 +54,18 @@ def create(session: Session, title: str) -> dict:
 
 
 def update(session: Session, todo_id: int, title: str, completed: bool) -> dict | None:
-    """Update a todo (full update)."""
+    """Replace the title and completion state of a todo.
+
+    Args:
+        session: Database session used to commit the changes.
+        todo_id: ID of the todo to update.
+        title: New title for the todo.
+        completed: New completion state for the todo.
+
+    Returns:
+        A dictionary with ``id``, ``title``, and ``completed`` keys, or None
+        if no todo has that ID.
+    """
     todo = session.query(Todo).filter_by(id=todo_id).first()
     if todo is None:
         return None
@@ -41,8 +76,19 @@ def update(session: Session, todo_id: int, title: str, completed: bool) -> dict 
     return {"id": todo.id, "title": todo.title, "completed": todo.completed}
 
 
-def patch(session: Session, todo_id: int, **fields) -> dict | None:
-    """Partial update a todo."""
+def patch(session: Session, todo_id: int, **fields: object) -> dict | None:
+    """Apply a partial update to a todo, skipping None values.
+
+    Args:
+        session: Database session used to commit the changes.
+        todo_id: ID of the todo to update.
+        **fields: Attribute names and values to set on the todo. Values that
+            are None are ignored.
+
+    Returns:
+        A dictionary with ``id``, ``title``, and ``completed`` keys, or None
+        if no todo has that ID.
+    """
     todo = session.query(Todo).filter_by(id=todo_id).first()
     if todo is None:
         return None
@@ -55,7 +101,15 @@ def patch(session: Session, todo_id: int, **fields) -> dict | None:
 
 
 def delete(session: Session, todo_id: int) -> bool:
-    """Delete a todo by ID."""
+    """Delete a todo by ID.
+
+    Args:
+        session: Database session used to delete and commit the todo.
+        todo_id: ID of the todo to delete.
+
+    Returns:
+        True if a todo was deleted, False if no todo has that ID.
+    """
     todo = session.query(Todo).filter_by(id=todo_id).first()
     if todo is None:
         return False
@@ -65,6 +119,10 @@ def delete(session: Session, todo_id: int) -> bool:
 
 
 def reset(session: Session) -> None:
-    """Clear all todos (used in tests)."""
+    """Delete all todos; intended for use in tests.
+
+    Args:
+        session: Database session used to delete and commit the todos.
+    """
     session.query(Todo).delete()
     session.commit()
