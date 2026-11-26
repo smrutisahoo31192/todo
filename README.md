@@ -1,6 +1,20 @@
 # todo
 
-A simple Todo application with a FastAPI backend, SQLite persistence, and a Vite + React frontend workspace.
+A simple Todo application with a FastAPI backend, SQLite persistence, and a Vite + React frontend workspace. The repository root also contains a standalone no-build todo app.
+
+## No-build todo app
+
+The root-level `index.html`, `styles.css`, and `app.js` files form a self-contained single-page todo app. You can add, complete, delete, and filter todos (all, active, completed). Todos are saved in your browser's `localStorage`, so they survive reloads.
+
+### Run it
+
+Open `index.html` directly in a browser, or serve the repository root with any static file server:
+
+```bash
+python3 -m http.server 8080
+```
+
+Then visit `http://localhost:8080`. No dependency installation or build step is required.
 
 ## Local development overview
 

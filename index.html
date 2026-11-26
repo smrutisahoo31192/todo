@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="app-header">
+        <h1>Todo</h1>
+        <p class="subtitle">A tiny list that remembers your progress.</p>
+      </header>
+
+      <form id="todo-form" class="todo-form" autocomplete="off">
+        <label class="sr-only" for="todo-input">New todo</label>
+        <input
+          id="todo-input"
+          name="title"
+          type="text"
+          maxlength="200"
+          placeholder="What needs to be done?"
+          required
+        />
+        <button type="submit">Add</button>
+      </form>
+
+      <div class="toolbar">
+        <div class="filters" role="group" aria-label="Filter todos">
+          <button type="button" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" data-filter="active" aria-pressed="false">Active</button>
+          <button type="button" data-filter="completed" aria-pressed="false">Completed</button>
+        </div>
+        <span id="remaining" class="remaining" aria-live="polite"></span>
+      </div>
+
+      <ul id="todo-list" class="todo-list" aria-label="Todos"></ul>
+      <p id="empty-state" class="empty-state" hidden></p>
+    </main>
+
+    <template id="todo-template">
+      <li class="todo-item">
+        <label class="todo-main">
+          <input class="todo-checkbox" type="checkbox" />
+          <span class="todo-title"></span>
+        </label>
+        <button class="todo-delete" type="button">Delete</button>
+      </li>
+    </template>
+  </body>
+</html>
