@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
-import { ApiError, healthApi } from './lib/api';
+import { ApiError, healthApi, todosApi } from './lib/api';
 
 vi.mock('./lib/api', () => ({
   ApiError: class extends Error {
@@ -19,13 +19,19 @@ vi.mock('./lib/api', () => ({
   healthApi: {
     check: vi.fn(),
   },
+  todosApi: {
+    list: vi.fn(),
+  },
 }));
 
 const healthCheckMock = vi.mocked(healthApi.check);
+const todosListMock = vi.mocked(todosApi.list);
 
 describe('App', () => {
   beforeEach(() => {
     healthCheckMock.mockReset();
+    todosListMock.mockReset();
+    todosListMock.mockResolvedValue([]);
   });
 
   it('renders the starter shell and loads backend health status', async () => {
@@ -51,5 +57,15 @@ describe('App', () => {
     expect(
       await screen.findByText(/backend request failed \(503\)\. start the fastapi app/i),
     ).toBeInTheDocument();
+  });
+
+  it('shows an empty-state message when the todo list is empty', async () => {
+    todosListMock.mockResolvedValue([]);
+    healthCheckMock.mockResolvedValue({ status: 'ok' });
+
+    render(<App />);
+
+    expect(await screen.findByText('Nothing to do yet')).toBeInTheDocument();
+    expect(todosListMock).toHaveBeenCalledOnce();
   });
 });

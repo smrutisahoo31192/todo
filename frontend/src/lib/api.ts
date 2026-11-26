@@ -63,3 +63,14 @@ export const healthApi = {
   check: (signal?: AbortSignal): Promise<HealthResponse> =>
     apiRequest<HealthResponse>('/health', { signal }),
 };
+
+export interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+export const todosApi = {
+  list: (signal?: AbortSignal): Promise<Todo[]> =>
+    apiRequest<Todo[]>('/todos', { signal }),
+};
